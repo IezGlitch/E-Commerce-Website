@@ -6,6 +6,7 @@
   <title>Your Cart — GramBazaar</title>
   <meta name="description" content="Review your cart and checkout. Your purchase directly supports rural artisans with 90%+ going to the maker.">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/karigar.css">
   <style>
     .cart-page {
       padding: calc(var(--nav-height) + 48px) 0 80px;
@@ -372,7 +373,12 @@
 
     <div class="form-group">
       <label for="c-address">Delivery Address *</label>
-      <textarea class="form-control" id="c-address" placeholder="Full address including pin code" style="min-height:80px"></textarea>
+      <textarea class="form-control" id="c-address" placeholder="Full address including pin code" style="min-height:80px" required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="c-requests">Customization Requests (e.g. custom colors, sizing, or weaver notes)</label>
+      <textarea class="form-control" id="c-requests" placeholder="e.g. Navy blue border, total length 5.5 meters, call before delivery" style="min-height:80px"></textarea>
     </div>
 
     <div class="form-group">
@@ -435,6 +441,7 @@
 
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
+<script src="js/karigar.js"></script>
 <script src="js/cart.js"></script>
 <script>
   function selectPay(el) {

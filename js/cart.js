@@ -34,9 +34,12 @@ function renderCart() {
 function buildCartItem(item) {
   const imgSrc = window.GB?.getImagePath(item.image) || '';
   const pct = Math.round((item.artisanShare / item.price) * 100);
+  const product = window.GB?.PRODUCTS.find(p => p.id === item.id);
+  const stock = product ? product.stock : 99;
+  const isCustomRequest = item.qty > stock;
 
   return `
-  <div class="cart-item" data-id="${item.id}">
+  <div class="cart-item" data-id="${item.id}" style="${isCustomRequest ? 'border: 2px dashed var(--primary); background: hsl(25, 85%, 98%);' : ''}">
     <div class="cart-item-img">
       ${imgSrc
         ? `<img src="${imgSrc}" alt="${item.name}">`
@@ -48,6 +51,16 @@ function buildCartItem(item) {
       <div class="cart-profit-bar">
         <span class="text-xs" style="color:var(--secondary)">Artisan earns ${pct}% (₹${item.artisanShare.toLocaleString('en-IN')} per unit)</span>
       </div>
+      ${isCustomRequest ? `
+        <div style="margin-top: 10px; padding: 12px; background: white; border-radius: var(--radius-md); border: 1px solid hsl(25, 85%, 90%); border-left: 4px solid var(--primary);">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">🌾 Custom Production Request (Exceeds ${stock} Ready Stock)</span>
+          <p style="font-size: 0.72rem; color: var(--mid); margin-top: 2px;">Submit a custom batch offer to the weaver below:</p>
+          <div style="margin-top: 8px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px;">
+            <input type="text" class="form-control" style="font-size: 0.75rem; padding: 6px 10px;" id="custom-specs-${item.id}" placeholder="Specs (e.g., custom colors, size)" value="${item.customSpecs || ''}" onchange="updateCustomSpec('${item.id}', this.value)">
+            <input type="number" class="form-control" style="font-size: 0.75rem; padding: 6px 10px;" id="custom-offer-${item.id}" placeholder="Offer Price (₹/unit)" value="${item.customOffer || ''}" onchange="updateCustomOffer('${item.id}', this.value)">
+          </div>
+        </div>
+      ` : ''}
     </div>
     <div class="cart-item-controls">
       <div class="qty-ctrl">
@@ -55,19 +68,37 @@ function buildCartItem(item) {
         <span class="qty-val" id="qty-${item.id}">${item.qty}</span>
         <button class="qty-btn qty-inc" data-id="${item.id}" aria-label="Increase quantity">+</button>
       </div>
-      <div class="cart-item-price">₹${(item.price * item.qty).toLocaleString('en-IN')}</div>
+      <div class="cart-item-price">₹${((item.customOffer ? parseInt(item.customOffer) : item.price) * item.qty).toLocaleString('en-IN')}</div>
       <button class="cart-remove" data-id="${item.id}" aria-label="Remove item" title="Remove">✕</button>
     </div>
   </div>`;
 }
 
+function updateCustomSpec(productId, val) {
+  const cart = window.GB_CART.getCart();
+  const item = cart.find(i => i.id === productId);
+  if (item) {
+    item.customSpecs = val;
+    window.GB_CART.saveCart(cart);
+  }
+}
+
+function updateCustomOffer(productId, val) {
+  const cart = window.GB_CART.getCart();
+  const item = cart.find(i => i.id === productId);
+  if (item) {
+    item.customOffer = val ? parseInt(val) : null;
+    window.GB_CART.saveCart(cart);
+    renderCart(); // re-render to update order summary
+  }
+}
+
 function renderSummary(cart) {
-  const subtotal = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-  const totalArtisanShare = cart.reduce((sum, i) => sum + (i.artisanShare * i.qty), 0);
-  const platformFee = subtotal - totalArtisanShare;
+  const subtotal = cart.reduce((sum, i) => sum + ((i.customOffer ? parseInt(i.customOffer) : i.price) * i.qty), 0);
+  const totalArtisanShare = cart.reduce((sum, i) => sum + ((i.customOffer ? Math.round(parseInt(i.customOffer) * 0.93) : i.artisanShare) * i.qty), 0);
   const shipping = subtotal >= 1500 ? 0 : 99;
   const total = subtotal + shipping;
-  const artisanPct = Math.round((totalArtisanShare / subtotal) * 100);
+  const artisanPct = subtotal > 0 ? Math.round((totalArtisanShare / subtotal) * 100) : 0;
 
   const el = document.getElementById('cart-summary-content');
   if (!el) return;
@@ -121,7 +152,15 @@ function bindCartActions() {
       const cart = window.GB_CART.getCart();
       const item = cart.find(i => i.id === id);
       if (item && item.qty > 1) {
-        window.GB_CART.updateQty(id, item.qty - 1);
+        // If decreasing below stock limit, clear custom requests flags
+        const product = window.GB?.PRODUCTS.find(p => p.id === id);
+        const stock = product ? product.stock : 99;
+        const newQty = item.qty - 1;
+        if (newQty <= stock) {
+          item.customSpecs = "";
+          item.customOffer = null;
+        }
+        window.GB_CART.updateQty(id, newQty);
         renderCart();
       }
     });
@@ -155,13 +194,48 @@ function closeCheckout() {
 function submitOrder(e) {
   if (e) e.preventDefault();
   const overlay = document.getElementById('checkout-overlay');
-  if (overlay) overlay.innerHTML = `
-    <div class="checkout-success">
-      <div class="success-icon">🎉</div>
-      <h2>Order Placed Successfully!</h2>
-      <p>Your purchase directly supports rural artisans.</p>
-      <p class="text-mid mt-8">You'll receive a confirmation shortly.</p>
-      <a href="shop.html" class="btn btn-primary mt-24">Continue Shopping</a>
+  if (!overlay) return;
+
+  // Validate form fields
+  const name = document.getElementById('c-name').value.trim();
+  const phone = document.getElementById('c-phone').value.trim();
+  const address = document.getElementById('c-address').value.trim();
+  const requests = document.getElementById('c-requests').value.trim();
+
+  if (!name || !phone || !address) {
+    showToast("Please fill in all required fields (Name, Phone, Address)", "error");
+    return;
+  }
+
+  const cart = window.GB_CART.getCart();
+  if (cart.length === 0) return;
+  const firstItem = cart[0];
+  const product = window.GB?.PRODUCTS.find(p => p.id === firstItem.id);
+  const stock = product ? product.stock : 99;
+  const isCustom = firstItem.qty > stock;
+
+  // Set up the modal container to host the Karigar.Connect screen
+  overlay.innerHTML = `
+    <div class="checkout-modal" style="max-width: 920px; width: 95%; max-height: 95vh; position: relative;">
+      <button class="modal-close" onclick="closeCheckout()" aria-label="Close">✕</button>
+      <h2 style="font-family:'Playfair Display', serif; font-size: 1.6rem; color: var(--secondary)">Karigar.Connect™ Demonstration</h2>
+      <p class="modal-sub" style="margin-bottom: 20px;">Connecting the e-commerce storefront directly to basic cellular phones in rural India.</p>
+      <div id="karigar-connect-demo"></div>
     </div>`;
-  window.GB_CART.clearCart();
+
+  const orderDetails = {
+    name: firstItem.name,
+    qty: firstItem.qty,
+    requests: isCustom
+      ? `Specs: ${firstItem.customSpecs || "Standard specs"}. Offer: ₹${(firstItem.customOffer || firstItem.price).toLocaleString('en-IN')}/unit`
+      : requests || "No special customizations",
+    artisanName: firstItem.artisanName,
+    village: firstItem.village,
+    isCustom: isCustom
+  };
+
+  // Launch the simulation
+  if (window.GB_KARIGAR) {
+    window.GB_KARIGAR.initKarigarDemo(orderDetails);
+  }
 }

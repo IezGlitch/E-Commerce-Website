@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Karigar.Connect™ — Bridging the Rural Digital Divide</title>
+  <meta name="description" content="Karigar.Connect matches e-commerce technology with basic cellular tools. SMS OTP and Automated Voice Calls bridge the literacy and language gap for rural weavers.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/karigar.css">
+  <style>
+    .kc-page {
+      padding: calc(var(--nav-height) + 48px) 0 80px;
+    }
+
+    .kc-intro {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    .kc-intro h1 {
+      margin-top: 10px;
+      font-size: clamp(2rem, 4vw, 3rem);
+    }
+
+    /* Concept cards */
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      margin-bottom: 56px;
+    }
+
+    @media (max-width: 900px) {
+      .concept-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .concept-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+      border-top: 4px solid var(--primary);
+      transition: var(--transition);
+    }
+
+    .concept-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .concept-card:nth-child(2) {
+      border-top-color: var(--secondary);
+    }
+
+    .concept-card:nth-child(3) {
+      border-top-color: var(--accent-dark);
+    }
+
+    .concept-icon {
+      font-size: 2.2rem;
+      margin-bottom: 16px;
+    }
+
+    .concept-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--dark);
+    }
+
+    .concept-card p {
+      font-size: 0.9rem;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+
+    /* Standalone simulator config */
+    .sim-config-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 32px;
+      border: 1px solid rgba(180,80,0,0.08);
+    }
+
+    .sim-config-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ NAVBAR ══════════ -->
+<nav class="navbar scrolled" id="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-icon">🌾</div>
+      GramBazaar
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="artisan.html">Artisans</a></li>
+      <li><a href="karigar-connect.html" class="active">Karigar.Connect</a></li>
+      <li><a href="list-product.html">Sell on GramBazaar</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="cart.html" class="nav-cart-btn" title="View Cart">
+        🛒
+        <span class="cart-badge" id="cart-badge">0</span>
+      </a>
+      <button class="nav-hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════ PAGE BODY ══════════ -->
+<div class="kc-page">
+  <div class="container">
+    
+    <!-- Intro -->
+    <div class="kc-intro">
+      <span class="section-label">Innovative Inclusion Tech</span>
+      <h1>Karigar.Connect™</h1>
+      <p class="text-mid" style="max-width: 600px; margin: 12px auto 0;">
+        Empowering rural weavers by connecting standard e-commerce with basic cellular networks. No smartphone or data plan required.
+      </p>
+    </div>
+
+    <!-- Concept Cards -->
+    <div class="concept-grid">
+      <div class="concept-card">
+        <div class="concept-icon">📱</div>
+        <h3>No Smartphone Needed</h3>
+        <p>
+          Weavers receive SMS orders directly on basic feature phones. This eliminates the need for expensive mobile data plans or high literacy levels.
+        </p>
+      </div>
+      <div class="concept-card">
+        <div class="concept-icon">🗣️</div>
+        <h3>Voice Read-Outs</h3>
+        <p>
+          Weavers who cannot read can click a single option to receive an automated voice call reading the order details in their own language and dialect.
+        </p>
+      </div>
+      <div class="concept-card">
+        <div class="concept-icon">🔐</div>
+        <h3>OTP Confirmation</h3>
+        <p>
+          An OTP code verification ensures secure confirmation and protects weavers against unauthorized order changes, establishing direct trust.
+        </p>
+      </div>
+    </div>
+
+    <!-- Standalone Simulator Setup -->
+    <div class="sim-config-card">
+      <div class="sim-config-title">
+        <span>🔧</span> Configure Simulation Order
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="sim-product">Select Product</label>
+          <select class="form-control" id="sim-product">
+            <option value="p1">Chanderi Silk Saree (Meera Devi)</option>
+            <option value="p2">Terracotta Pot Set (Ramnath Kumhar)</option>
+            <option value="p3">Tribal Silver Necklace (Kavitha Nair)</option>
+            <option value="p4">Handwoven Dhurrie Carpet (Meera Devi)</option>
+            <option value="p5">Bamboo Basket Gift Set (Ramnath Kumhar)</option>
+            <option value="p6">Madhubani Folk Painting (Kavitha Nair)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="sim-qty">Quantity</label>
+          <input type="number" class="form-control" id="sim-qty" value="1" min="1" max="9">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="sim-requests">Customization Requests (Simulating Sizing, Colors, Notes)</label>
+        <input type="text" class="form-control" id="sim-requests" placeholder="e.g. Saffron shade, custom 6-feet width, deliver before Tuesday">
+      </div>
+      <button class="btn btn-primary w-full" style="justify-content:center; padding: 14px;" onclick="startSimulatedDemo()">
+        🚀 Start Simulation Showcase
+      </button>
+    </div>
+
+    <!-- Simulator Container -->
+    <div id="karigar-connect-demo">
+      <div style="text-align: center; padding: 48px; border: 2px dashed var(--light); border-radius: var(--radius-lg); background: white;">
+        <span style="font-size: 3rem;">📲</span>
+        <h3 class="mt-16" style="font-family:'Outfit', sans-serif;">Interactive Sandbox</h3>
+        <p class="text-mid mt-8">Configure your order details above and click "Start Simulation" to launch the cell phone emulator.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <div class="logo-icon">🌾</div>
+          GramBazaar
+        </div>
+        <p>Connecting rural artisans directly with buyers. No middlemen. Just authentic craft and fair trade.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Shop</h5>
+        <ul>
+          <li><a href="shop.html">All Products</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Features</h5>
+        <ul>
+          <li><a href="karigar-connect.html">Karigar.Connect</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Artisans</h5>
+        <ul>
+          <li><a href="list-product.html">Register</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2024 GramBazaar. Made with <span class="heart">❤️</span> for Rural India.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/karigar.js"></script>
+<script>
+  function startSimulatedDemo() {
+    const prodId = document.getElementById('sim-product').value;
+    const qty = parseInt(document.getElementById('sim-qty').value) || 1;
+    const requests = document.getElementById('sim-requests').value.trim();
+
+    if (!window.GB || !window.GB.PRODUCTS) return;
+
+    const prod = window.GB.PRODUCTS.find(p => p.id === prodId);
+    if (!prod) return;
+
+    const isCustom = qty > prod.stock;
+    const orderDetails = {
+      name: prod.name,
+      qty: qty,
+      requests: isCustom
+        ? `Specs: ${requests || "Custom colors & sizing"}. Offer: ₹${prod.price.toLocaleString('en-IN')}/unit`
+        : requests || "No special customizations",
+      artisanName: prod.artisanName,
+      village: prod.village,
+      isCustom: isCustom
+    };
+
+    if (window.GB_KARIGAR) {
+      window.GB_KARIGAR.initKarigarDemo(orderDetails);
+      // Smooth scroll to the demo container
+      document.getElementById('karigar-connect-demo').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+</script>
+</body>
+</html>
