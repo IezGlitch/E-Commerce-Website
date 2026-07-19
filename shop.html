@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop — GramBazaar | Authentic Rural Crafts</title>
+  <meta name="description" content="Browse and buy authentic handmade products directly from rural Indian artisans. Filter by category, compare prices and see exactly how much goes to the maker.">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .shop-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 32px;
+      padding-top: 32px;
+      padding-bottom: 80px;
+      align-items: start;
+    }
+
+    /* ── Sidebar ── */
+    .shop-sidebar {
+      position: sticky;
+      top: calc(var(--nav-height) + 20px);
+    }
+
+    .sidebar-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 20px;
+    }
+
+    .sidebar-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 16px;
+    }
+
+    /* Category filters */
+    #category-filters {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .filter-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--dark-3);
+      background: transparent;
+      transition: var(--transition);
+      text-align: left;
+      width: 100%;
+    }
+
+    .filter-btn:hover { background: var(--light); color: var(--primary); }
+    .filter-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      font-weight: 600;
+    }
+
+    /* Profit filter */
+    .profit-range {
+      margin-top: 8px;
+    }
+
+    .range-slider {
+      width: 100%;
+      accent-color: var(--primary);
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--mid);
+      margin-top: 6px;
+    }
+
+    /* ── Main Content ── */
+    .shop-main { min-height: 60vh; }
+
+    .shop-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      color: var(--mid);
+      pointer-events: none;
+    }
+
+    #shop-search {
+      padding-left: 42px;
+    }
+
+    .sort-wrap { display: flex; align-items: center; gap: 10px; }
+    .sort-label { font-size: 0.875rem; color: var(--mid); white-space: nowrap; font-weight: 500; }
+    #sort-select {
+      padding: 10px 16px;
+      min-width: 160px;
+    }
+
+    #product-count {
+      font-size: 0.875rem;
+      color: var(--mid);
+      font-weight: 500;
+    }
+
+    #products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    /* ── State callout ── */
+    .state-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .state-badge {
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: var(--light);
+      color: var(--dark-3);
+      cursor: pointer;
+      transition: var(--transition);
+      border: 1.5px solid transparent;
+    }
+
+    .state-badge:hover, .state-badge.active {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: hsl(25,85%,95%);
+    }
+
+    @media (max-width: 900px) {
+      .shop-layout {
+        grid-template-columns: 1fr;
+      }
+      .shop-sidebar {
+        position: static;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      #products-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      #products-grid {
+        grid-template-columns: 1fr;
+      }
+      .shop-sidebar {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ NAVBAR ══════════ -->
+<nav class="navbar scrolled" id="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-icon">🌾</div>
+      GramBazaar
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="artisan.html">Artisans</a></li>
+      <li><a href="list-product.html">Sell on GramBazaar</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="cart.html" class="nav-cart-btn" title="View Cart">
+        🛒
+        <span class="cart-badge" id="cart-badge">0</span>
+      </a>
+      <a href="list-product.html" class="btn btn-primary btn-sm">+ List Product</a>
+      <button class="nav-hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════ PAGE HERO ══════════ -->
+<div class="page-hero">
+  <div class="container page-hero-content">
+    <span class="section-label" style="background:rgba(255,255,255,0.12);color:var(--accent)">Marketplace</span>
+    <h1 style="color:white;margin-top:10px">Authentic Rural Crafts</h1>
+    <p style="color:rgba(255,255,255,0.75);max-width:480px;margin-top:10px">
+      Every product comes directly from the artisan's hands to yours. 
+      The <strong style="color:var(--accent)">profit bar</strong> shows exactly what the maker earns.
+    </p>
+  </div>
+</div>
+
+<!-- ══════════ SHOP LAYOUT ══════════ -->
+<div class="container">
+  <div class="shop-layout">
+
+    <!-- Sidebar -->
+    <aside class="shop-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-title">Categories</div>
+        <div id="category-filters"></div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-title">States</div>
+        <div class="state-badges">
+          <span class="state-badge">Madhya Pradesh</span>
+          <span class="state-badge">Rajasthan</span>
+          <span class="state-badge">Chhattisgarh</span>
+          <span class="state-badge">Gujarat</span>
+          <span class="state-badge">West Bengal</span>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-title">Artisan Direct %</div>
+        <div class="profit-range">
+          <input type="range" class="range-slider" id="profit-range" min="80" max="100" value="80" step="1">
+          <div class="range-labels">
+            <span>80%+</span>
+            <span id="profit-val">80%</span>
+            <span>100%</span>
+          </div>
+        </div>
+        <p class="text-xs text-mid" style="margin-top:8px">Minimum % of your payment going to the artisan</p>
+      </div>
+
+      <div class="sidebar-card" style="background:linear-gradient(135deg,hsl(150,42%,32%),hsl(150,42%,22%));border:none">
+        <p class="text-xs" style="color:rgba(255,255,255,0.7);margin-bottom:6px">🌾 GramBazaar Promise</p>
+        <p class="text-sm" style="color:white;font-weight:600">Every artisan earns at least 90% of the listed price. Always.</p>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="shop-main">
+      <div class="shop-toolbar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="search" class="form-control" id="shop-search" placeholder="Search products, artisans, villages…" aria-label="Search products">
+        </div>
+        <div class="sort-wrap">
+          <label for="sort-select" class="sort-label">Sort:</label>
+          <select class="form-control" id="sort-select">
+            <option value="default">Featured</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="rating">Top Rated</option>
+            <option value="popular">Most Popular</option>
+          </select>
+        </div>
+        <span id="product-count" class="text-sm text-mid"></span>
+      </div>
+
+      <div id="products-grid">
+        <!-- Rendered by shop.js -->
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <div class="logo-icon">🌾</div>
+          GramBazaar
+        </div>
+        <p>Connecting rural artisans directly with buyers. No middlemen. No exploitation. Just authentic craft and fair trade.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Shop</h5>
+        <ul>
+          <li><a href="shop.html">All Products</a></li>
+          <li><a href="#">Textiles</a></li>
+          <li><a href="#">Pottery</a></li>
+          <li><a href="#">Jewelry</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Artisans</h5>
+        <ul>
+          <li><a href="list-product.html">Register</a></li>
+          <li><a href="artisan.html">Meet Artisans</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>About</h5>
+        <ul>
+          <li><a href="#">Our Mission</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2024 GramBazaar. Made with <span class="heart">❤️</span> for Rural India.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/shop.js"></script>
+<script>
+  // Profit range slider
+  const rangeInput = document.getElementById('profit-range');
+  const rangeVal   = document.getElementById('profit-val');
+  if (rangeInput) {
+    rangeInput.addEventListener('input', () => {
+      rangeVal.textContent = rangeInput.value + '%';
+    });
+  }
+</script>
+</body>
+</html>

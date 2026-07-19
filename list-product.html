@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>List Your Products — GramBazaar | Sell Directly</title>
+  <meta name="description" content="Register as an artisan on GramBazaar and list your rural handicraft products. Free registration. Keep 90%+ of every sale. No middlemen.">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .lp-page {
+      padding: calc(var(--nav-height) + 60px) 0 80px;
+      background: var(--surface);
+    }
+
+    .lp-layout {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 48px;
+      align-items: start;
+    }
+
+    /* ── Form Area ── */
+    .form-section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .form-section-title .fst-icon {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .form-section-title h3 { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 700; }
+
+    .form-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+
+    .step-indicator {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+
+    .step {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+    }
+
+    .step::after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: var(--light);
+    }
+
+    .step:last-child::after { display: none; }
+
+    .step-dot {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--light);
+      color: var(--mid);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      border: 2px solid var(--light);
+      transition: var(--transition);
+    }
+
+    .step.active .step-dot {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(220,100,0,0.15);
+    }
+
+    .step.done .step-dot {
+      background: var(--secondary);
+      color: white;
+      border-color: var(--secondary);
+    }
+
+    .step-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--mid);
+      white-space: nowrap;
+    }
+
+    .step.active .step-label { color: var(--primary); }
+    .step.done .step-label { color: var(--secondary); }
+
+    /* Form steps */
+    .form-step { display: none; }
+    .form-step.active { display: block; }
+
+    /* Image upload */
+    .image-upload-area {
+      border: 2px dashed hsl(25,40%,80%);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      background: hsl(35,30%,98%);
+    }
+
+    .image-upload-area:hover, .image-upload-area.drag-over {
+      border-color: var(--primary);
+      background: hsl(25,85%,97%);
+    }
+
+    .upload-icon { font-size: 2.5rem; margin-bottom: 10px; }
+    .upload-text { font-size: 0.9rem; color: var(--mid); }
+    .upload-text strong { color: var(--primary); }
+
+    #img-file { display: none; }
+
+    /* Pricing calculator */
+    .pricing-calc {
+      background: linear-gradient(135deg, var(--dark) 0%, var(--dark-2) 100%);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      color: white;
+      margin-top: 16px;
+    }
+
+    .pricing-calc h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+    }
+
+    .calc-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .calc-row:last-child { border-bottom: none; }
+
+    .calc-row.total {
+      padding-top: 14px;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .calc-row .artisan-earn {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .profit-bar-calc {
+      margin-top: 16px;
+      height: 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .profit-fill-calc {
+      height: 100%;
+      background: linear-gradient(90deg, var(--secondary), hsl(150,60%,50%));
+      border-radius: 5px;
+      transition: width 0.5s ease;
+    }
+
+    /* ── Sidebar ── */
+    .lp-sidebar { position: sticky; top: calc(var(--nav-height) + 20px); }
+
+    .benefit-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 20px;
+    }
+
+    .benefit-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--light);
+    }
+
+    .benefit-item:last-child { border-bottom: none; }
+
+    .benefit-icon {
+      width: 40px; height: 40px;
+      border-radius: var(--radius-md);
+      background: var(--light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .benefit-item h5 { font-size: 0.9rem; margin-bottom: 2px; }
+    .benefit-item p  { font-size: 0.8rem; color: var(--mid); }
+
+    .artisan-earn-callout {
+      background: linear-gradient(135deg, var(--secondary), hsl(150,42%,22%));
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      color: white;
+      text-align: center;
+    }
+
+    .artisan-earn-callout .big-pct {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .artisan-earn-callout p {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.8);
+      margin-top: 8px;
+    }
+
+    /* ── Success Screen ── */
+    .success-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .success-overlay.active { display: flex; }
+
+    .success-box {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: 56px 48px;
+      text-align: center;
+      max-width: 440px;
+      width: 90%;
+      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .success-icon { font-size: 4rem; margin-bottom: 16px; }
+    .success-box h2 { margin-bottom: 10px; color: var(--secondary); }
+    .success-box p  { color: var(--mid); margin-bottom: 24px; }
+
+    @media (max-width: 900px) {
+      .lp-layout { grid-template-columns: 1fr; }
+      .lp-sidebar { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ NAVBAR ══════════ -->
+<nav class="navbar scrolled" id="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-icon">🌾</div>
+      GramBazaar
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="artisan.html">Artisans</a></li>
+      <li><a href="list-product.html">Sell on GramBazaar</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="cart.html" class="nav-cart-btn" title="View Cart">
+        🛒
+        <span class="cart-badge" id="cart-badge">0</span>
+      </a>
+      <button class="nav-hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════ PAGE ══════════ -->
+<div class="lp-page">
+  <div class="container">
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:48px">
+      <span class="section-label">Free to Join</span>
+      <h1 style="margin-top:10px">List Your Products on GramBazaar</h1>
+      <p style="color:var(--mid);max-width:520px;margin:12px auto 0;font-size:1.05rem">
+        Sell directly to buyers across India and the world. Keep 90%+ of every sale. Absolutely free to register.
+      </p>
+    </div>
+
+    <div class="lp-layout">
+      <!-- ── Form ── -->
+      <div>
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+          <div class="step active" id="step-ind-1">
+            <div class="step-dot">1</div>
+            <span class="step-label">About You</span>
+          </div>
+          <div class="step" id="step-ind-2">
+            <div class="step-dot">2</div>
+            <span class="step-label">Your Product</span>
+          </div>
+          <div class="step" id="step-ind-3">
+            <div class="step-dot">3</div>
+            <span class="step-label">Pricing</span>
+          </div>
+        </div>
+
+        <form id="listing-form" novalidate>
+
+          <!-- ─ Step 1: Artisan Info ─ -->
+          <div class="form-step active" id="step-1">
+            <div class="form-card">
+              <div class="form-section-title">
+                <div class="fst-icon">👤</div>
+                <div><h3>About You</h3><p class="text-xs text-mid">Tell us who you are and where you craft</p></div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="artisan-name">Full Name *</label>
+                  <input type="text" class="form-control" id="artisan-name" placeholder="e.g. Meera Devi" required>
+                </div>
+                <div class="form-group">
+                  <label for="phone">Mobile Number *</label>
+                  <input type="tel" class="form-control" id="phone" placeholder="10-digit number" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="village">Village / Town *</label>
+                  <input type="text" class="form-control" id="village" placeholder="e.g. Chanderi" required>
+                </div>
+                <div class="form-group">
+                  <label for="state">State *</label>
+                  <select class="form-control" id="state" required>
+                    <option value="">Select State</option>
+                    <option>Andhra Pradesh</option><option>Assam</option>
+                    <option>Bihar</option><option>Chhattisgarh</option>
+                    <option>Gujarat</option><option>Jharkhand</option>
+                    <option>Karnataka</option><option>Kerala</option>
+                    <option>Madhya Pradesh</option><option>Maharashtra</option>
+                    <option>Manipur</option><option>Meghalaya</option>
+                    <option>Nagaland</option><option>Odisha</option>
+                    <option>Punjab</option><option>Rajasthan</option>
+                    <option>Tamil Nadu</option><option>Telangana</option>
+                    <option>Tripura</option><option>Uttar Pradesh</option>
+                    <option>Uttarakhand</option><option>West Bengal</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="craft-type">Type of Craft *</label>
+                <select class="form-control" id="craft-type" required>
+                  <option value="">Select your craft</option>
+                  <option>Handloom Weaving</option>
+                  <option>Terracotta / Pottery</option>
+                  <option>Jewelry Making</option>
+                  <option>Bamboo / Cane Crafts</option>
+                  <option>Paintings (Madhubani, Warli, Pattachitra)</option>
+                  <option>Embroidery / Needlework</option>
+                  <option>Wood Carving</option>
+                  <option>Block Printing</option>
+                  <option>Leather Work</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="bio">Your Story *</label>
+                <textarea class="form-control" id="bio" placeholder="Tell buyers about yourself, your craft, and what makes your products special…" required style="min-height:120px"></textarea>
+              </div>
+
+              <button type="button" class="btn btn-primary" onclick="nextStep(2)" style="width:100%;justify-content:center">
+                Continue → Tell us about your product
+              </button>
+            </div>
+          </div>
+
+          <!-- ─ Step 2: Product Info ─ -->
+          <div class="form-step" id="step-2">
+            <div class="form-card">
+              <div class="form-section-title">
+                <div class="fst-icon">📦</div>
+                <div><h3>About Your Product</h3><p class="text-xs text-mid">Describe the product you want to list</p></div>
+              </div>
+
+              <div class="form-group">
+                <label for="product-name">Product Name *</label>
+                <input type="text" class="form-control" id="product-name" placeholder="e.g. Handwoven Silk Saree with Zari Border" required>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="category">Category *</label>
+                  <select class="form-control" id="category" required>
+                    <option value="">Select category</option>
+                    <option>Textiles</option>
+                    <option>Pottery</option>
+                    <option>Jewelry</option>
+                    <option>Bamboo Crafts</option>
+                    <option>Paintings</option>
+                    <option>Wood Crafts</option>
+                    <option>Other Crafts</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="stock">Available Stock *</label>
+                  <input type="number" class="form-control" id="stock" placeholder="How many pieces?" min="1" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="description">Product Description *</label>
+                <textarea class="form-control" id="description" placeholder="Describe the product — materials, dimensions, how it's made, any special features…" required style="min-height:120px"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Product Images</label>
+                <div class="image-upload-area" id="upload-area" onclick="document.getElementById('img-file').click()">
+                  <div class="upload-icon">📸</div>
+                  <div class="upload-text"><strong>Click to upload</strong> or drag & drop<br><small>JPG, PNG up to 10MB each. Min 2 photos.</small></div>
+                </div>
+                <input type="file" id="img-file" accept="image/*" multiple>
+              </div>
+
+              <div style="display:flex;gap:12px">
+                <button type="button" class="btn btn-outline" onclick="nextStep(1)" style="flex:1;justify-content:center">← Back</button>
+                <button type="button" class="btn btn-primary" onclick="nextStep(3)" style="flex:2;justify-content:center">Continue → Set your price</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─ Step 3: Pricing ─ -->
+          <div class="form-step" id="step-3">
+            <div class="form-card">
+              <div class="form-section-title">
+                <div class="fst-icon">💰</div>
+                <div><h3>Set Your Price</h3><p class="text-xs text-mid">You keep 93% — GramBazaar charges just 7%</p></div>
+              </div>
+
+              <div class="form-group">
+                <label for="price">Your Listed Price (₹) *</label>
+                <input type="number" class="form-control" id="price" placeholder="Enter price in rupees" min="100" oninput="updateCalc()" required>
+              </div>
+
+              <div class="pricing-calc" id="pricing-calc" style="display:none">
+                <h4>💡 Profit Calculator</h4>
+                <div class="calc-row">
+                  <span>Your listed price</span>
+                  <span id="calc-price">₹0</span>
+                </div>
+                <div class="calc-row">
+                  <span>GramBazaar fee (7%)</span>
+                  <span id="calc-fee" style="color:rgba(255,255,255,0.5)">₹0</span>
+                </div>
+                <div class="calc-row total">
+                  <span>You earn</span>
+                  <span class="artisan-earn" id="calc-earn">₹0</span>
+                </div>
+                <div class="profit-bar-calc">
+                  <div class="profit-fill-calc" id="calc-bar" style="width:93%"></div>
+                </div>
+                <p style="font-size:0.78rem;color:rgba(255,255,255,0.5);margin-top:10px;text-align:center">vs. traditional: artisan keeps only 20–40%</p>
+              </div>
+
+              <div class="form-group mt-24">
+                <label for="gi-tag">GI Tag / Special Certification (optional)</label>
+                <input type="text" class="form-control" id="gi-tag" placeholder="e.g. Chanderi GI Tag, Darjeeling Tea Board">
+              </div>
+
+              <div style="display:flex;gap:12px;margin-top:8px">
+                <button type="button" class="btn btn-outline" onclick="nextStep(2)" style="flex:1;justify-content:center">← Back</button>
+                <button type="submit" class="btn btn-primary" style="flex:2;justify-content:center">🌾 Submit Listing</button>
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- ── Sidebar ── -->
+      <aside class="lp-sidebar">
+        <div class="artisan-earn-callout">
+          <div class="big-pct">93%</div>
+          <p>of every sale goes directly to you, the artisan</p>
+          <div style="height:1px;background:rgba(255,255,255,0.15);margin:16px 0"></div>
+          <p style="font-size:0.8rem">GramBazaar charges only <strong style="color:var(--accent)">7% platform fee</strong> — the lowest in the market</p>
+        </div>
+
+        <div class="benefit-card mt-24">
+          <h4 style="font-family:'Outfit',sans-serif;margin-bottom:4px">Why Sell on GramBazaar?</h4>
+          <p class="text-xs text-mid" style="margin-bottom:8px">Join 1,247+ artisans already earning more</p>
+          <div class="benefit-item">
+            <div class="benefit-icon">🆓</div>
+            <div><h5>100% Free to Register</h5><p>No listing fees, no subscriptions. Pay only when you sell.</p></div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-icon">💸</div>
+            <div><h5>Fast Payments</h5><p>Money transferred directly to your bank account within 24 hours of delivery.</p></div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-icon">📦</div>
+            <div><h5>Shipping Support</h5><p>We partner with logistics providers for affordable doorstep pickup from your village.</p></div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-icon">🌍</div>
+            <div><h5>National & Global Reach</h5><p>Reach buyers in every Indian city and 15+ countries abroad.</p></div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-icon">🏅</div>
+            <div><h5>GI Tag Recognition</h5><p>We help showcase and certify your craft's geographic indication.</p></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SUCCESS OVERLAY ══════════ -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-box">
+    <div class="success-icon">🎉</div>
+    <h2>You're Listed!</h2>
+    <p>Your product has been submitted for review. Our team will verify and publish it within 24–48 hours. We'll SMS you at the number provided.</p>
+    <a href="shop.html" class="btn btn-primary w-full" style="justify-content:center">Browse the Marketplace →</a>
+  </div>
+</div>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo"><div class="logo-icon">🌾</div>GramBazaar</div>
+        <p>Connecting rural artisans directly with buyers. No middlemen. Just authentic craft and fair trade.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Quick Links</h5>
+        <ul>
+          <li><a href="shop.html">Shop</a></li>
+          <li><a href="artisan.html">Artisans</a></li>
+          <li><a href="#">Our Mission</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Support</h5>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul>
+          <li><a href="#">hello@grambazaar.in</a></li>
+          <li><a href="#">+91 98765 43210</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2024 GramBazaar. Made with <span class="heart">❤️</span> for Rural India.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  let currentStep = 1;
+
+  function nextStep(to) {
+    document.getElementById('step-' + currentStep).classList.remove('active');
+    document.getElementById('step-ind-' + currentStep).classList.remove('active');
+    if (to > currentStep) {
+      document.getElementById('step-ind-' + currentStep).classList.add('done');
+    }
+    currentStep = to;
+    document.getElementById('step-' + currentStep).classList.add('active');
+    document.getElementById('step-ind-' + currentStep).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateCalc() {
+    const price = parseFloat(document.getElementById('price').value) || 0;
+    const calc  = document.getElementById('pricing-calc');
+
+    if (price >= 100) {
+      calc.style.display = 'block';
+      const fee  = Math.round(price * 0.07);
+      const earn = price - fee;
+      document.getElementById('calc-price').textContent = '₹' + price.toLocaleString('en-IN');
+      document.getElementById('calc-fee').textContent   = '₹' + fee.toLocaleString('en-IN');
+      document.getElementById('calc-earn').textContent  = '₹' + earn.toLocaleString('en-IN');
+    } else {
+      calc.style.display = 'none';
+    }
+  }
+
+  // Form submit
+  document.getElementById('listing-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    document.getElementById('success-overlay').classList.add('active');
+  });
+
+  // Image drag & drop
+  const uploadArea = document.getElementById('upload-area');
+  uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
+  uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+  uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove('drag-over');
+    const files = e.dataTransfer.files;
+    uploadArea.querySelector('.upload-text').innerHTML = `✅ <strong>${files.length} image(s) selected</strong>`;
+  });
+  document.getElementById('img-file').addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+      uploadArea.querySelector('.upload-text').innerHTML = `✅ <strong>${e.target.files.length} image(s) selected</strong>`;
+    }
+  });
+</script>
+</body>
+</html>

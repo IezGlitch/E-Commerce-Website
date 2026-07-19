@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Cart — GramBazaar</title>
+  <meta name="description" content="Review your cart and checkout. Your purchase directly supports rural artisans with 90%+ going to the maker.">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .cart-page {
+      padding: calc(var(--nav-height) + 48px) 0 80px;
+      min-height: 80vh;
+    }
+
+    .cart-layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    /* ── Cart Items ── */
+    #cart-items { display: flex; flex-direction: column; gap: 16px; }
+
+    .cart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--light);
+    }
+
+    .cart-header h2 { font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 700; }
+
+    .clear-cart-btn {
+      font-size: 0.82rem;
+      color: #e83557;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      transition: var(--transition);
+    }
+
+    .clear-cart-btn:hover { background: #fef2f4; }
+
+    .cart-item {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 88px 1fr auto;
+      gap: 18px;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+
+    .cart-item-img {
+      width: 88px; height: 88px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--light);
+      flex-shrink: 0;
+    }
+
+    .cart-item-img img { width: 100%; height: 100%; object-fit: cover; }
+
+    .cart-img-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      background: linear-gradient(135deg, hsl(35,30%,90%), hsl(25,40%,85%));
+    }
+
+    .cart-item-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .cart-item-meta {
+      font-size: 0.82rem;
+      color: var(--mid);
+      margin-bottom: 6px;
+    }
+
+    .cart-profit-bar { font-size: 0.78rem; color: var(--secondary); }
+
+    .cart-item-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .qty-ctrl {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--light);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .qty-btn {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--dark);
+      transition: var(--transition);
+      background: none;
+    }
+
+    .qty-btn:hover { background: var(--primary); color: white; }
+
+    .qty-val {
+      min-width: 32px;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .cart-item-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .cart-remove {
+      font-size: 0.8rem;
+      color: var(--mid);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      transition: var(--transition);
+    }
+
+    .cart-remove:hover { background: #fef2f4; color: #e83557; }
+
+    /* ── Summary ── */
+    .cart-summary-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-md);
+      position: sticky;
+      top: calc(var(--nav-height) + 20px);
+    }
+
+    .cart-summary-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid var(--light);
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 9px 0;
+      font-size: 0.9rem;
+      color: var(--dark-3);
+    }
+
+    .summary-divider { height: 1px; background: var(--light); margin: 10px 0; }
+
+    .summary-total {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .summary-note {
+      font-size: 0.78rem;
+      color: var(--primary);
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .artisan-impact-box {
+      background: linear-gradient(135deg, hsl(150,42%,95%), hsl(150,42%,90%));
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin: 16px 0;
+      border: 1px solid hsl(150,42%,82%);
+    }
+
+    .impact-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
+
+    .artisan-impact-box strong {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--secondary);
+      margin-bottom: 2px;
+    }
+
+    .artisan-impact-box p {
+      font-size: 0.78rem;
+      color: var(--secondary);
+      opacity: 0.8;
+    }
+
+    /* ── Checkout Overlay ── */
+    .checkout-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .checkout-overlay.active { display: flex; }
+
+    .checkout-modal {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: 36px 32px;
+      max-width: 520px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.4s ease forwards;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(40px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .checkout-modal h2 { font-size: 1.4rem; margin-bottom: 6px; }
+    .checkout-modal .modal-sub { color: var(--mid); font-size: 0.9rem; margin-bottom: 28px; }
+
+    .modal-close {
+      position: absolute;
+      top: 16px; right: 20px;
+      font-size: 1.3rem;
+      color: var(--mid);
+      background: var(--light);
+      border-radius: 50%;
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .payment-methods {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .pay-method {
+      padding: 14px 8px;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--light);
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--dark-3);
+    }
+
+    .pay-method:hover { border-color: var(--primary); color: var(--primary); }
+    .pay-method.active { border-color: var(--primary); background: hsl(25,85%,97%); color: var(--primary); }
+    .pay-method .pay-icon { font-size: 1.4rem; display: block; margin-bottom: 4px; }
+
+    .checkout-success {
+      text-align: center;
+      padding: 48px 24px;
+    }
+
+    .checkout-success .success-icon { font-size: 4rem; margin-bottom: 16px; }
+    .checkout-success h2 { color: var(--secondary); margin-bottom: 10px; }
+    .checkout-success p  { color: var(--mid); }
+
+    @media (max-width: 900px) {
+      .cart-layout { grid-template-columns: 1fr; }
+      .cart-summary-card { position: static; }
+      .cart-item { grid-template-columns: 72px 1fr; }
+      .cart-item-controls { flex-direction: row; align-items: center; grid-column: 1 / -1; justify-content: space-between; }
+    }
+
+    @media (max-width: 600px) {
+      .payment-methods { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ NAVBAR ══════════ -->
+<nav class="navbar scrolled" id="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-icon">🌾</div>
+      GramBazaar
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="artisan.html">Artisans</a></li>
+      <li><a href="list-product.html">Sell on GramBazaar</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="cart.html" class="nav-cart-btn" title="View Cart">
+        🛒
+        <span class="cart-badge" id="cart-badge">0</span>
+      </a>
+      <button class="nav-hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════ CART PAGE ══════════ -->
+<div class="cart-page">
+  <div class="container">
+    <div class="cart-header">
+      <h2>🛒 Your Cart</h2>
+      <button class="clear-cart-btn" onclick="if(confirm('Clear all items?')){window.GB_CART.clearCart();renderCart();}">Clear Cart</button>
+    </div>
+
+    <div class="cart-layout">
+      <div>
+        <div id="cart-items"></div>
+      </div>
+
+      <aside>
+        <div class="cart-summary-card" id="cart-summary">
+          <h3>Order Summary</h3>
+          <div id="cart-summary-content"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ CHECKOUT OVERLAY ══════════ -->
+<div class="checkout-overlay" id="checkout-overlay">
+  <div class="checkout-modal" style="position:relative">
+    <button class="modal-close" onclick="closeCheckout()" aria-label="Close">✕</button>
+    <h2>Complete Your Order</h2>
+    <p class="modal-sub">You're buying directly from rural artisans 🌾</p>
+
+    <div class="form-group">
+      <label for="c-name">Full Name *</label>
+      <input type="text" class="form-control" id="c-name" placeholder="Your name">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="c-email">Email *</label>
+        <input type="email" class="form-control" id="c-email" placeholder="you@email.com">
+      </div>
+      <div class="form-group">
+        <label for="c-phone">Phone *</label>
+        <input type="tel" class="form-control" id="c-phone" placeholder="Mobile number">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="c-address">Delivery Address *</label>
+      <textarea class="form-control" id="c-address" placeholder="Full address including pin code" style="min-height:80px"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Payment Method</label>
+      <div class="payment-methods">
+        <div class="pay-method active" onclick="selectPay(this)">
+          <span class="pay-icon">📱</span>UPI
+        </div>
+        <div class="pay-method" onclick="selectPay(this)">
+          <span class="pay-icon">💳</span>Card
+        </div>
+        <div class="pay-method" onclick="selectPay(this)">
+          <span class="pay-icon">🏦</span>Net Banking
+        </div>
+        <div class="pay-method" onclick="selectPay(this)">
+          <span class="pay-icon">💵</span>COD
+        </div>
+        <div class="pay-method" onclick="selectPay(this)">
+          <span class="pay-icon">📲</span>Wallet
+        </div>
+      </div>
+    </div>
+
+    <div style="background:hsl(150,42%,95%);border-radius:var(--radius-md);padding:14px;margin-bottom:20px;font-size:0.82rem;color:var(--secondary)">
+      🌾 <strong>90%+ of your payment goes directly to the artisan</strong> within 24 hours of delivery.
+    </div>
+
+    <button class="btn btn-primary w-full" style="justify-content:center;font-size:1rem;padding:16px" onclick="submitOrder()">
+      Place Order 🌾
+    </button>
+  </div>
+</div>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo"><div class="logo-icon">🌾</div>GramBazaar</div>
+        <p>Connecting rural artisans directly with buyers. No middlemen. Just authentic craft and fair trade.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Shop</h5>
+        <ul><li><a href="shop.html">All Products</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h5>Help</h5>
+        <ul><li><a href="#">Contact Us</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h5>About</h5>
+        <ul><li><a href="#">Our Mission</a></li></ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2024 GramBazaar. Made with <span class="heart">❤️</span> for Rural India.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/cart.js"></script>
+<script>
+  function selectPay(el) {
+    document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('active'));
+    el.classList.add('active');
+  }
+</script>
+</body>
+</html>

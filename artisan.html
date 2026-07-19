@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artisan Profile — GramBazaar</title>
+  <meta name="description" content="Meet the rural artisans behind GramBazaar. Read their stories, explore their products and support them directly.">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Profile Hero ── */
+    .profile-hero {
+      padding: calc(var(--nav-height) + 60px) 0 0;
+      background: linear-gradient(160deg, var(--dark) 0%, var(--dark-2) 60%, hsl(150,30%,15%) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='80' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='40' cy='40' r='1' fill='rgba(255,255,255,0.04)'/%3E%3C/svg%3E") repeat;
+    }
+
+    .profile-header {
+      display: flex;
+      gap: 40px;
+      align-items: flex-end;
+      padding-bottom: 48px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+    }
+
+    .profile-avatar {
+      width: 160px;
+      height: 160px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 4px solid rgba(255,255,255,0.15);
+      flex-shrink: 0;
+      background: var(--dark-3);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .profile-avatar img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    .profile-avatar-placeholder {
+      width: 100%; height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      background: linear-gradient(135deg, hsl(25,40%,25%), hsl(150,30%,25%));
+    }
+
+    .profile-meta { color: white; flex: 1; min-width: 240px; }
+
+    .profile-craft {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .profile-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .profile-location {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 18px;
+    }
+
+    .profile-badges { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .profile-badge {
+      padding: 5px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: rgba(255,255,255,0.9);
+      backdrop-filter: blur(8px);
+    }
+
+    .profile-stats {
+      display: flex;
+      gap: 2px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+
+    .pstat {
+      flex: 1;
+      min-width: 100px;
+      text-align: center;
+      padding: 18px 16px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .pstat:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
+    .pstat:last-child  { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+
+    .pstat-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .pstat-label { font-size: 0.72rem; color: rgba(255,255,255,0.6); margin-top: 2px; }
+
+    /* ── Content Tabs ── */
+    .profile-content { padding: 48px 0 80px; }
+
+    .tab-nav {
+      display: flex;
+      gap: 4px;
+      border-bottom: 2px solid var(--light);
+      margin-bottom: 40px;
+    }
+
+    .tab-btn {
+      padding: 12px 24px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--mid);
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .tab-btn::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0;
+      height: 2px;
+      background: var(--primary);
+      transform: scaleX(0);
+      transition: var(--transition);
+    }
+
+    .tab-btn.active { color: var(--primary); background: hsl(25,85%,97%); }
+    .tab-btn.active::after { transform: scaleX(1); }
+    .tab-btn:hover { color: var(--primary); background: hsl(25,85%,98%); }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Story ── */
+    .story-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 40px;
+      align-items: start;
+    }
+
+    .story-text { font-size: 1rem; line-height: 1.9; color: var(--dark-3); }
+    .story-text p { margin-bottom: 16px; }
+
+    .story-blockquote {
+      margin: 28px 0;
+      padding: 20px 24px;
+      border-left: 4px solid var(--primary);
+      background: hsl(25,85%,97%);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--dark);
+      font-style: italic;
+    }
+
+    .story-sidebar-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      position: sticky;
+      top: calc(var(--nav-height) + 20px);
+    }
+
+    .story-sidebar-card h4 { margin-bottom: 16px; font-size: 1rem; }
+
+    .artisan-detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--light);
+      font-size: 0.875rem;
+    }
+
+    .artisan-detail-row:last-child { border-bottom: none; }
+    .artisan-detail-row span:first-child { color: var(--mid); }
+    .artisan-detail-row span:last-child { font-weight: 600; color: var(--dark); }
+
+    /* ── Products Grid ── */
+    .artisan-products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    /* ── All Artisans List ── */
+    .all-artisans-hero {
+      padding: calc(var(--nav-height) + 48px) 0 48px;
+      background: linear-gradient(160deg, var(--dark) 0%, hsl(150,30%,15%) 100%);
+      text-align: center;
+    }
+
+    .artisans-full-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      padding: 60px 0;
+    }
+
+    .artisan-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+
+    .artisan-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+
+    .artisan-card-img {
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: var(--light);
+    }
+
+    .artisan-card-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .artisan-card:hover .artisan-card-img img { transform: scale(1.06); }
+
+    .artisan-card-body { padding: 20px; }
+
+    .artisan-card-craft {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .artisan-card-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .artisan-card-loc {
+      font-size: 0.82rem;
+      color: var(--mid);
+      margin-bottom: 14px;
+    }
+
+    .artisan-card-stats {
+      display: flex;
+      gap: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--light);
+    }
+
+    .ast { text-align: center; }
+    .ast-val { font-weight: 700; font-size: 1.1rem; color: var(--dark); }
+    .ast-label { font-size: 0.72rem; color: var(--mid); }
+
+    @media (max-width: 900px) {
+      .story-layout { grid-template-columns: 1fr; }
+      .story-sidebar-card { position: static; }
+      .artisan-products-grid { grid-template-columns: repeat(2, 1fr); }
+      .artisans-full-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .artisan-products-grid { grid-template-columns: 1fr; }
+      .artisans-full-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ NAVBAR ══════════ -->
+<nav class="navbar scrolled" id="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-icon">🌾</div>
+      GramBazaar
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="artisan.html">Artisans</a></li>
+      <li><a href="list-product.html">Sell on GramBazaar</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="cart.html" class="nav-cart-btn" title="View Cart">
+        🛒
+        <span class="cart-badge" id="cart-badge">0</span>
+      </a>
+      <a href="list-product.html" class="btn btn-primary btn-sm">+ List Product</a>
+      <button class="nav-hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════ CONTENT (rendered by JS) ══════════ -->
+<div id="artisan-page-root"></div>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo"><div class="logo-icon">🌾</div>GramBazaar</div>
+        <p>Connecting rural artisans directly with buyers. No middlemen. Just authentic craft and fair trade.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Shop</h5>
+        <ul><li><a href="shop.html">All Products</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h5>Artisans</h5>
+        <ul><li><a href="list-product.html">Register</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h5>About</h5>
+        <ul><li><a href="#">Our Mission</a></li></ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2024 GramBazaar. Made with <span class="heart">❤️</span> for Rural India.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const root   = document.getElementById('artisan-page-root');
+  const params = new URLSearchParams(window.location.search);
+  const id     = params.get('id');
+
+  if (id) {
+    renderArtisanProfile(id, root);
+  } else {
+    renderAllArtisans(root);
+  }
+});
+
+function renderAllArtisans(root) {
+  document.title = 'Meet Our Artisans — GramBazaar';
+  root.innerHTML = `
+    <div class="all-artisans-hero">
+      <div class="container">
+        <span class="section-label" style="background:rgba(255,255,255,0.12);color:var(--accent)">The Makers</span>
+        <h1 style="color:white;margin-top:10px">Meet Our Artisans</h1>
+        <p style="color:rgba(255,255,255,0.75);max-width:480px;margin:10px auto 0">
+          Every craft has a story. Every artisan has a dream. GramBazaar helps those dreams reach you — directly.
+        </p>
+      </div>
+    </div>
+    <div class="container">
+      <div class="artisans-full-grid">${window.GB.ARTISANS.map(a => buildArtisanCard(a)).join('')}</div>
+    </div>`;
+}
+
+function buildArtisanCard(a) {
+  const imgSrc = window.GB.getImagePath(a.image);
+  return `
+    <div class="artisan-card reveal">
+      <div class="artisan-card-img">
+        ${imgSrc ? `<img src="${imgSrc}" alt="${a.name}">` : `<div style="width:100%;height:100%;background:linear-gradient(135deg,hsl(25,40%,85%),hsl(35,40%,90%));display:flex;align-items:center;justify-content:center;font-size:4rem">👩‍🎨</div>`}
+      </div>
+      <div class="artisan-card-body">
+        <div class="artisan-card-craft">${a.craft}</div>
+        <div class="artisan-card-name">${a.name}</div>
+        <div class="artisan-card-loc">📍 ${a.village}, ${a.state}</div>
+        <p class="text-sm text-mid" style="margin-bottom:14px">${a.bio.slice(0,100)}…</p>
+        <div class="artisan-card-stats">
+          <div class="ast"><div class="ast-val">${a.totalSales}</div><div class="ast-label">Sales</div></div>
+          <div class="ast"><div class="ast-val">${a.rating}⭐</div><div class="ast-label">Rating</div></div>
+          <div class="ast"><div class="ast-val">${a.products.length}</div><div class="ast-label">Products</div></div>
+        </div>
+        <a href="artisan.html?id=${a.id}" class="btn btn-outline w-full" style="justify-content:center;margin-top:14px">View Profile →</a>
+      </div>
+    </div>`;
+}
+
+function renderArtisanProfile(id, root) {
+  const artisan  = window.GB.ARTISANS.find(a => a.id === id);
+  if (!artisan) { root.innerHTML = `<div class="container" style="padding:100px 0;text-align:center"><h2>Artisan not found</h2><a href="artisan.html" class="btn btn-primary mt-24">← All Artisans</a></div>`; return; }
+
+  document.title = `${artisan.name} — GramBazaar`;
+  const imgSrc   = window.GB.getImagePath(artisan.image);
+  const products = window.GB.PRODUCTS.filter(p => artisan.products.includes(p.id));
+
+  root.innerHTML = `
+    <!-- Profile Hero -->
+    <div class="profile-hero">
+      <div class="container">
+        <div class="profile-header">
+          <div class="profile-avatar">
+            ${imgSrc ? `<img src="${imgSrc}" alt="${artisan.name}">` : `<div class="profile-avatar-placeholder">👩‍🎨</div>`}
+          </div>
+          <div class="profile-meta">
+            <div class="profile-craft">${artisan.craft}</div>
+            <div class="profile-name">${artisan.name}</div>
+            <div class="profile-location">📍 ${artisan.village}, ${artisan.state}</div>
+            <div class="profile-badges">
+              <span class="profile-badge">⭐ ${artisan.rating} Rating</span>
+              <span class="profile-badge">✅ Verified Artisan</span>
+              <span class="profile-badge">🌾 GramBazaar Since ${artisan.joinedYear}</span>
+            </div>
+          </div>
+        </div>
+        <div class="profile-stats">
+          <div class="pstat"><div class="pstat-val">${artisan.totalSales}+</div><div class="pstat-label">Products Sold</div></div>
+          <div class="pstat"><div class="pstat-val">${artisan.rating}</div><div class="pstat-label">Avg Rating</div></div>
+          <div class="pstat"><div class="pstat-val">${artisan.products.length}</div><div class="pstat-label">Products Listed</div></div>
+          <div class="pstat"><div class="pstat-val">90%+</div><div class="pstat-label">Earnings Share</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="profile-content">
+      <div class="container">
+        <div class="tab-nav">
+          <button class="tab-btn active" data-tab="story">📖 Their Story</button>
+          <button class="tab-btn" data-tab="products">🎁 Products (${products.length})</button>
+        </div>
+
+        <!-- Story Tab -->
+        <div class="tab-panel active" id="tab-story">
+          <div class="story-layout">
+            <div class="story-text">
+              <p>${artisan.bio}</p>
+              <div class="story-blockquote">"${artisan.craft} is not just my profession — it is who I am, who my ancestors were. GramBazaar has given me the dignity and the income my craft deserves."</div>
+              <p>The artisans on GramBazaar are verified, real craftspeople from rural India. When you buy from ${artisan.name}, 90%+ of your payment goes directly into their hands — no agents, no wholesalers, no exploitation.</p>
+              <p>Supporting ${artisan.name} means supporting an entire ecosystem of rural knowledge, skill, and culture that has been alive for generations.</p>
+            </div>
+            <div class="story-sidebar-card">
+              <h4>Artisan Details</h4>
+              <div class="artisan-detail-row"><span>Craft</span><span>${artisan.craft}</span></div>
+              <div class="artisan-detail-row"><span>Village</span><span>${artisan.village}</span></div>
+              <div class="artisan-detail-row"><span>State</span><span>${artisan.state}</span></div>
+              <div class="artisan-detail-row"><span>Member Since</span><span>${artisan.joinedYear}</span></div>
+              <div class="artisan-detail-row"><span>Total Sales</span><span>${artisan.totalSales} orders</span></div>
+              <div class="artisan-detail-row"><span>Your Share to Artisan</span><span style="color:var(--secondary)">90%+ guaranteed</span></div>
+              <a href="shop.html" class="btn btn-primary w-full" style="justify-content:center;margin-top:20px">Shop ${artisan.name.split(' ')[0]}'s Products</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Products Tab -->
+        <div class="tab-panel" id="tab-products">
+          <div class="artisan-products-grid">
+            ${products.map(p => {
+              const pct    = Math.round((p.artisanShare / p.price) * 100);
+              const imgSrc = window.GB.getImagePath(p.image);
+              const stars  = '★'.repeat(Math.round(p.rating)) + '☆'.repeat(5 - Math.round(p.rating));
+              const badgeCls = { 'GI Tagged':'badge-gi','Bestseller':'badge-best','Eco Friendly':'badge-eco','Original Art':'badge-art','One of a Kind':'badge-unique' }[p.badge] || 'badge-best';
+              return `
+                <article class="product-card">
+                  <div class="card-img">
+                    ${imgSrc ? `<img src="${imgSrc}" alt="${p.name}" loading="lazy">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,hsl(35,30%,90%),hsl(25,40%,85%))">${{'Textiles':'🧵','Pottery':'🏺','Jewelry':'💎','Bamboo Crafts':'🌿','Paintings':'🎨'}[p.category]||'🎁'}</div>`}
+                    <span class="card-badge ${badgeCls}">${p.badge}</span>
+                    <button class="card-wishlist" aria-label="Wishlist">♡</button>
+                  </div>
+                  <div class="card-body">
+                    <h3 class="card-title">${p.name}</h3>
+                    <div class="rating-wrap"><span class="stars text-xs">${stars}</span><span class="text-xs text-mid">${p.rating} (${p.reviews})</span></div>
+                    <div class="profit-bar-wrap">
+                      <div class="profit-bar-label"><span class="text-xs">Direct to artisan</span><span class="artisan-pct text-xs">${pct}%</span></div>
+                      <div class="profit-bar"><div class="profit-fill" style="width:${pct}%"></div></div>
+                    </div>
+                    <div class="card-price-row">
+                      <div class="card-price">₹${p.price.toLocaleString('en-IN')}</div>
+                      <button class="btn-add-cart" data-id="${p.id}">🛒 Add</button>
+                    </div>
+                  </div>
+                </article>`;
+            }).join('')}
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  // Tabs
+  root.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      root.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      root.querySelector('#tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Add to cart
+  root.querySelectorAll('.btn-add-cart').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ok = window.GB_CART.addToCart(btn.dataset.id);
+      if (ok) { btn.textContent = '✓ Added'; btn.classList.add('added'); setTimeout(() => { btn.innerHTML = '🛒 Add'; btn.classList.remove('added'); }, 2000); }
+    });
+  });
+  root.querySelectorAll('.card-wishlist').forEach(btn => {
+    btn.addEventListener('click', () => { btn.classList.toggle('active'); btn.textContent = btn.classList.contains('active') ? '♥' : '♡'; });
+  });
+
+  initScrollReveal && initScrollReveal();
+}
+</script>
+</body>
+</html>
